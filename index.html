@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fresh Flow - AI-Powered Food Waste Elimination</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+    
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #eee;
+      background: #f9f9f9;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 16px 20px;
+      text-align: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.3s ease;
+      border-bottom: 3px solid transparent;
+    }
+    
+    .tab-btn:hover {
+      background: #f0f0f0;
+    }
+    
+    .tab-btn.active {
+      color: #667eea;
+      background: white;
+      border-bottom-color: #667eea;
+    }
+    
+    .tab-content {
+      display: none;
+      padding: 40px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .tab-content h2 {
+      color: #333;
+      margin-bottom: 24px;
+      font-size: 24px;
+    }
+    
+    .card {
+      background: #f9f9f9;
+      padding: 24px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #667eea;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card h3 {
+      color: #667eea;
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+    
+    .card p {
+      color: #555;
+      margin: 10px 0;
+      line-height: 1.6;
+    }
+    
+    .input-group {
+      margin: 16px 0;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border 0.3s ease;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin: 12px 0;
+      display: inline-block;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .success {
+      color: #27ae60;
+      font-weight: 600;
+      padding: 14px;
+      background: #d5f4e6;
+      border-radius: 6px;
+      margin: 16px 0;
+      border-left: 4px solid #27ae60;
+    }
+    
+    .warning {
+      color: #e74c3c;
+      font-weight: 600;
+      padding: 14px;
+      background: #fadad5;
+      border-radius: 6px;
+      margin: 16px 0;
+      border-left: 4px solid #e74c3c;
+    }
+    
+    .timer {
+      font-size: 36px;
+      font-weight: bold;
+      color: #e74c3c;
+      margin: 20px 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      background: #fff3cd;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    
+    .metric {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 10px 16px;
+      margin: 6px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .metric.success {
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      border-left: none;
+      padding: 10px 16px;
+    }
+    
+    .metric.warning {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      border-left: none;
+      padding: 10px 16px;
+    }
+    
+    .metric.info {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+      border-left: none;
+      padding: 10px 16px;
+    }
+    
+    .dashboard {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 30px;
+      border-radius: 8px;
+      margin-top: 30px;
+      border: 2px solid #667eea;
+    }
+    
+    .dashboard h3 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    
+    .metrics-row {
+      margin: 16px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .ai-box {
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      padding: 20px;
+      border-radius: 8px;
+      margin: 16px 0;
+      border-left: 4px solid #667eea;
+    }
+    
+    .ai-box p {
+      color: #333;
+      margin: 10px 0;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .food-item {
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      transition: all 0.3s ease;
+    }
+    
+    .food-item:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .food-item h4 {
+      color: #e74c3c;
+      margin-bottom: 8px;
+    }
+    
+    .ngo-match {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 20px;
+      border-radius: 8px;
+      margin: 16px 0;
+      border: 2px solid #fed6e3;
+    }
+    
+    .ngo-match p {
+      color: #333;
+      margin: 8px 0;
+    }
+    
+    .ngo-name {
+      font-weight: 700;
+      color: #667eea;
+      font-size: 16px;
+    }
+    
+    .footer {
+      background: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+      border-top: 1px solid #eee;
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 24px;
+      }
+      .tab-content {
+        padding: 20px;
+      }
+      .tabs {
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        flex: 1 1 calc(33.333% - 8px);
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🍽️ Fresh Flow</h1>
+    <p>AI-Powered Food Waste Elimination System</p>
+    <p style="font-size: 14px; margin-top: 12px;">Predict waste • Price dynamically • Prevent loss</p>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(event, 'restaurant')">👨‍💼 Restaurant</button>
+      <button class="tab-btn" onclick="switchTab(event, 'customer')">👤 Customer</button>
+      <button class="tab-btn" onclick="switchTab(event, 'ngo')">🤝 NGO</button>
+      <button class="tab-btn" onclick="switchTab(event, 'analytics')">📊 Analytics</button>
+    </div>
+
+    <!-- RESTAURANT MANAGER TAB -->
+    <div id="restaurant" class="tab-content active">
+      <h2>Restaurant Manager Dashboard</h2>
+      
+      <div class="card">
+        <h3>➕ Add Food to System</h3>
+        <div class="input-group">
+          <label>Food Item:</label>
+          <select id="food">
+            <option value="Chicken Biryani">🍜 Chicken Biryani</option>
+            <option value="Dosa">🥘 Dosa</option>
+            <option value="Samosa">🥟 Samosa</option>
+            <option value="Idli">🍚 Idli</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Made at (Time):</label>
+          <input type="time" id="madeTime" value="11:00">
+        </div>
+        <div class="input-group">
+          <label>Quantity (portions):</label>
+          <input type="number" id="qty" value="20" min="1" max="100">
+        </div>
+        <div class="input-group">
+          <label>Base Price (₹):</label>
+          <input type="number" id="basePrice" value="250" min="10" max="1000">
+        </div>
+        <button onclick="addFood()">✓ Add to system</button>
+      </div>
+
+      <div id="foodStatus" class="hidden">
+        <div class="card">
+          <h3>📍 Food Status</h3>
+          <p><strong id="foodNameDisplay">Chicken Biryani</strong></p>
+          <p><strong>Made at:</strong> <span id="madeAtDisplay">11:00</span> AM</p>
+          <p><strong>Expires at:</strong> <span id="expiryDisplay">4:00</span> PM (5 hours shelf life)</p>
+          <p><strong>Base price:</strong> ₹<span id="basePriceDisplay">250</span> per portion</p>
+          
+          <div class="timer" id="countdown">5:00:00</div>
+          
+          <p><strong>Current Status:</strong></p>
+          <p id="soldStatus" style="color: #27ae60; font-weight: bold;">Sold: 12/20 (60%)</p>
+        </div>
+
+        <div class="ai-box">
+          <h3>🤖 AI Demand Prediction</h3>
+          <p><strong>Accuracy: 87%</strong></p>
+          <p>Analysis shows 50% of inventory won't sell by 6 PM</p>
+          <p style="margin-top: 14px; font-weight: 600;">📌 Recommended action: Apply 40% discount at 3 PM</p>
+          <p style="font-size: 12px; color: #666; margin-top: 8px;">
+            Why? Time to expiry is critical (4 hours) + demand curve dropping + inventory level high
+          </p>
+          <button onclick="approveDiscount()" style="margin-top: 16px; background: #27ae60;">✓ Approve 40% discount now</button>
+          <div id="discountConfirm" class="success hidden">
+            ✅ Discount approved! Live on customer app in real-time
+          </div>
+        </div>
+      </div>
+
+      <div id="noFoodMessage" class="warning">
+        👆 Add food above to see real-time prediction and discount recommendation
+      </div>
+    </div>
+
+    <!-- CUSTOMER APP TAB -->
+    <div id="customer" class="tab-content">
+      <h2>Customer App - Find Great Deals</h2>
+      
+      <div id="noDiscountMessage" style="text-align: center; padding: 40px; color: #999;">
+        <p style="font-size: 16px;">⏳ Waiting for restaurant to add food and apply discount...</p>
+      </div>
+
+      <div id="customerFood" class="hidden">
+        <div class="food-item">
+          <h4>🔥 <span id="customerFoodName">Chicken Biryani</span> - LIMITED TIME OFFER!</h4>
+          <p><strong>Regular price:</strong> ₹<span id="regularPrice">250</span></p>
+          <p><strong>🎉 Your price:</strong> ₹<span id="discountedPrice">150</span> <span style="color: #27ae60; font-weight: bold;">(40% OFF!)</span></p>
+          <p><strong>⏰ Expires in:</strong> <span id="customerTimer">2 hours</span></p>
+          <p style="color: #666; font-size: 13px; margin-top: 12px;">✓ Fresh made today • Photo verified • Ready for immediate pickup</p>
+          <button onclick="placeOrder()" style="background: #27ae60; margin-top: 16px;">🛒 Order now</button>
+          <div id="orderConfirm" class="success hidden">
+            ✅ Order placed successfully! Ready for pickup in 10 minutes
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NGO DONATION SYSTEM TAB -->
+    <div id="ngo" class="tab-content">
+      <h2>NGO Donation System</h2>
+      
+      <div id="noNgoMessage" style="text-align: center; padding: 40px; color: #999;">
+        <p style="font-size: 16px;">⏳ Waiting for unsold food to match with verified NGO...</p>
+      </div>
+
+      <div id="ngoMatch" class="hidden">
+        <div class="card">
+          <h3>⚡ URGENT Match Found!</h3>
+          <p><strong id="unsoldCount">5</strong> <span id="unsoldFood">Chicken Biryani</span> unsold</p>
+          <p><strong style="color: #e74c3c;">⏰ 10 minutes to expiry</strong></p>
+        </div>
+
+        <div class="ngo-match">
+          <p style="font-size: 14px; color: #666;">✓ Auto-matched with verified organization:</p>
+          <p class="ngo-name">🏥 Hope House Orphanage</p>
+          <p>📍 Location: 2 km away | 👥 50 children | ⏰ Evening meal needed</p>
+          <p style="font-size: 12px; color: #666; margin-top: 8px;">
+            ✓ Government registered • ✓ Physical visit verified • ✓ Hygiene certified
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>📱 QR Donation Tracking</h3>
+          <p style="text-align: center; font-size: 48px; margin: 20px 0;">█████</p>
+          <p style="text-align: center; color: #666; font-size: 12px;">QR-TRACK-12345678</p>
+          <p style="text-align: center; color: #666; margin-top: 12px;">
+            Unique ID for temperature • freshness • delivery verification
+          </p>
+        </div>
+
+        <div style="text-align: center;">
+          <button onclick="confirmDonation()" style="background: #27ae60; font-size: 16px; padding: 14px 32px;">
+            ✓ Confirm donation & send to NGO
+          </button>
+          <div id="donationConfirm" class="success hidden">
+            ✅ Donation confirmed!<br>
+            5 children at Hope House will be fed today with fresh, nutritious food
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div id="analytics" class="tab-content">
+      <h2>Impact Dashboard & Analytics</h2>
+      
+      <div class="dashboard">
+        <h3>📊 Today's Metrics</h3>
+        
+        <p style="margin-bottom: 16px; color: #333;">Real-time statistics from your operations:</p>
+        
+        <div class="metrics-row">
+          <div class="metric">📥 Food added: 20</div>
+          <div class="metric">💰 Sold full price: 12 (₹3,000)</div>
+          <div class="metric">🏷️ Sold discounted: 3 (₹450)</div>
+          <div class="metric info">🤝 Donated: 1</div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric success">💹 Total Revenue: ₹3,450</div>
+          <div class="metric warning">♻️ Waste prevented: 5%</div>
+          <div class="metric info">👥 People fed: 5+</div>
+        </div>
+
+        <div style="margin-top: 24px; padding: 20px; background: white; border-radius: 8px;">
+          <h4 style="color: #667eea; margin-bottom: 12px;">Key Insights</h4>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>✓ Revenue Impact:</strong> Without Fresh Flow discount, would have made ₹0 on unsold items. With system, captured ₹3,450 revenue.
+          </p>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>✓ Waste Impact:</strong> Prevented 5kg of food waste (normally 40% waste → now 5%)
+          </p>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>✓ Social Impact:</strong> 5+ vulnerable people fed through verified NGO network
+          </p>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>✓ Environmental Impact:</strong> 5kg waste prevented = 2.5kg CO2 emissions avoided
+          </p>
+        </div>
+
+        <div style="margin-top: 24px; padding: 20px; background: #e8f4f8; border-radius: 8px; border-left: 4px solid #3b8bd4;">
+          <h4 style="color: #3b8bd4; margin-bottom: 12px;">💼 Business Model</h4>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>Subscription:</strong> ₹7,999/month
+          </p>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>ROI for restaurant:</strong> ₹20,000/month savings ÷ ₹7,999 = 2.5x ROI monthly
+          </p>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>Payback period:</strong> 2 weeks
+          </p>
+          <p style="margin: 8px 0; color: #555;">
+            <strong>TAM:</strong> ₹1,300 crore (10M restaurants + 25M kirana stores in India)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Fresh Flow - AI-Powered Food Waste Elimination System | HackFusion 2026 | Proof of Concept Demo</p>
+    </div>
+  </div>
+
+  <script>
+    let foodAdded = false;
+    let discountApproved = false;
+    let orderPlaced = false;
+    let donationConfirmed = false;
+    let countdownInterval = null;
+
+    function switchTab(event, tabName) {
+      const tabContents = document.querySelectorAll('.tab-content');
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      
+      tabContents.forEach(content => content.classList.remove('active'));
+      tabBtns.forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function addFood() {
+      const food = document.getElementById('food').value;
+      const madeTime = document.getElementById('madeTime').value;
+      const qty = document.getElementById('qty').value;
+      const basePrice = document.getElementById('basePrice').value;
+
+      if (!madeTime || !qty || !basePrice) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      foodAdded = true;
+
+      document.getElementById('foodNameDisplay').textContent = food;
+      document.getElementById('madeAtDisplay').textContent = madeTime;
+      document.getElementById('basePriceDisplay').textContent = basePrice;
+      document.getElementById('customerFoodName').textContent = food;
+      document.getElementById('regularPrice').textContent = basePrice;
+      document.getElementById('unsoldFood').textContent = food;
+
+      const [hours, minutes] = madeTime.split(':');
+      const expiryHour = (parseInt(hours) + 5) % 24;
+      document.getElementById('expiryDisplay').textContent = expiryHour + ':' + minutes;
+
+      document.getElementById('foodStatus').classList.remove('hidden');
+      document.getElementById('noFoodMessage').classList.add('hidden');
+      document.getElementById('noDiscountMessage').classList.add('hidden');
+      document.getElementById('noNgoMessage').classList.add('hidden');
+
+      startCountdown();
+    }
+
+    function startCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      
+      let seconds = 5 * 3600;
+      
+      countdownInterval = setInterval(() => {
+        seconds--;
+        if (seconds < 0) {
+          clearInterval(countdownInterval);
+          return;
+        }
+
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        
+        const timeStr = h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        const element = document.getElementById('countdown');
+        if (element) element.textContent = timeStr;
+
+        const hoursRemain = Math.ceil(seconds / 3600);
+        const customerTimerEl = document.getElementById('customerTimer');
+        if (customerTimerEl) {
+          if (hoursRemain > 1) {
+            customerTimerEl.textContent = hoursRemain + ' hours';
+          } else if (hoursRemain === 1) {
+            customerTimerEl.textContent = '1 hour';
+          } else {
+            customerTimerEl.textContent = (Math.floor(seconds / 60)) + ' minutes';
+          }
+        }
+      }, 1000);
+    }
+
+    function approveDiscount() {
+      if (!foodAdded) {
+        alert('Please add food first');
+        return;
+      }
+
+      discountApproved = true;
+      const basePrice = document.getElementById('basePrice').value;
+      const discountedPrice = Math.round(basePrice * 0.6);
+
+      document.getElementById('discountedPrice').textContent = discountedPrice;
+      document.getElementById('discountConfirm').classList.remove('hidden');
+      document.getElementById('customerFood').classList.remove('hidden');
+      document.getElementById('noDiscountMessage').classList.add('hidden');
+      document.getElementById('ngoMatch').classList.remove('hidden');
+      document.getElementById('noNgoMessage').classList.add('hidden');
+    }
+
+    function placeOrder() {
+      if (!discountApproved) {
+        alert('Discount not approved yet');
+        return;
+      }
+
+      orderPlaced = true;
+      document.getElementById('orderConfirm').classList.remove('hidden');
+    }
+
+    function confirmDonation() {
+      if (!discountApproved) {
+        alert('Please approve discount first');
+        return;
+      }
+
+      donationConfirmed = true;
+      document.getElementById('donationConfirm').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
